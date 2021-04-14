@@ -110,6 +110,7 @@ void sort_list(PNODE pHead) {
      * 泛型：对数据不同的存储方式，他们的操作是相同的
     */
     int i, j, t;
+    int len = length_list(pHead);
     PNODE p, q;
     for (i = 0, p = pHead->pNext; i < len-1; ++i, p = p->pNext) {
         for (j = i +1, q = p->pNext; j < len; ++j, q = q->pNext) {
