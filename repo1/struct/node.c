@@ -13,7 +13,7 @@ void traverse_list(PNODE pHead); // 遍历链表
 bool is_empty(PNODE pHead); // 判断代码是否为空
 int length_list(PNODE pHead); // 求链表的长度
 bool insert_list(PNODE pHead, int pos, int val); // 向链表内部插入数据
-bool delete_list(PNODE pHead, int pos, int * temp); // 删除链表中的元素 temp 可以当作一个容器，暂时存放要删除的数据
+bool delete_list(PNODE pHead, int pos, int * pVal); // 删除链表中的元素 temp 可以当作一个容器，暂时存放要删除的数据
 void sort_list(PNODE pHead); // 排序
 
 int main(void)
@@ -122,4 +122,67 @@ void sort_list(PNODE pHead) {
         }
     }
     return;
+}
+
+// 在pHead所指向的链表的第pos个节点前面插入一个新的节点，该节点的值是val，并且pos从1开始
+bool insert_list(PNODE pHead, int pos, int val) {
+    
+    int i = 0;
+    PNODE p = pHead;
+
+    while (NULL != p && i < pos-1) {
+        p = p->pNext;
+        ++i;
+    }
+
+    if (i > pos-1 || NULL == p) {
+        return false;
+    }
+
+    PNODE pNew = (PNODE)malloc(sizeof(NODE));
+    if (NULL == pNew) {
+        printf("动态内存分配失败!"\n);
+        exit(-1);
+    }
+    pNew->data = val;
+    PNODE q = p->pNext; // 定义一个临时节点，用户节点间的位置互换
+    p->pNext = pNew;
+    pNew->pNext = q;
+    
+    return true;
+
+}
+
+bool delete_list(PNODE pHead, int pos, int * pVal) {
+
+    int i = 0;
+    PNODE p = pHead;
+
+    /**
+     * 为什么需要这一步？
+     * 
+     * 假设需要删除第4个节点，那么pos = 4
+     * p一开始指向头结点，进入循环后，只要头结点指向的首节点不为空，那么就进入第一次循环的操作
+     * 第一次循环执行完毕之后，p已经指向了下一个节点，且i加1
+     * 就这样一直循环，当 i < pos-1 时，则跳出循环，此时p就指向了要删除节点的前一个节点
+     * 这样就确定了要删除节点的位置，即 p->pNext->pNext;
+     * 
+     **/
+    while (NULL != p->pNext && i < pos-1) {
+        p = p->pNext;
+        ++i;
+    }
+
+    if (i > pos-1 || NULL == p->pNext)
+        return false;
+    
+    PNODE q = p->pNext;
+    *pVal = q->data;
+
+    // 删除p节点后面的节点
+    p->pNext = p->pNext->pNext;
+    free(q);
+    q = NULL;
+    
+    return true;
 }
